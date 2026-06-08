@@ -1,0 +1,37 @@
+# Developer Studio: GCP Anthos Service Mesh Studio
+# Kubernetes Config Map and Deployment definition
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: studio-config
+  namespace: default
+data:
+  STUDIO_NAME: "GCP Anthos Service Mesh Studio"
+  ENVIRONMENT: "staging"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: studio-deployment
+  namespace: default
+  labels:
+    app: studio-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: studio-app
+  template:
+    metadata:
+      labels:
+        app: studio-app
+    spec:
+      containers:
+      - name: main-container
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        envFrom:
+        - configMapRef:
+            name: studio-config
